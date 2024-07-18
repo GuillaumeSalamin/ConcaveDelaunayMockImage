@@ -16,31 +16,32 @@ import sys
 
 if __name__ == "__main__":
     
-
     with open("paraImage.yaml") as stream:
         try:
-            data = yaml.safe_load(stream)
+            para = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
 
-    name = data["SimulationName"]
-    trans = data["translation"]
-    rot = data["rotation"]
-    triName = data["triSaveName"]
-    NeighborsName = data["NeighborsSaveName"]
-    InitialFrame = data["InitialFrameName"]
-    triangleFolder = data["triangleFolder"]
-    axe1 = data["axe1"]
-    axe2 = data["axe2"]
+    name = para["SimulationName"]
+    trans = para["translation"]
+    rot = para["rotation"]
+    triName = para["triSaveName"]
+    NeighborsName = para["NeighborsSaveName"]
+    InitialFrame = para["InitialFrameName"]
+    triangleFolder = para["triangleFolder"]
+    axe1 = para["axe1"]
+    axe2 = para["axe2"]
+    Nmin = para["Nmin"]
+    Rmax = para["Rmax"]
 
 
     print('scaling data')
     nb0 = download_simulation(name,trans,rot)
     std_list = compute_std(nb0)
-    nb0_scaled,std = scale_nb(nb0)
+    nb0_scaled = scale_nb(nb0,std_list)
 
     nb = download_simulation(name,trans,rot)
-    nb_scaled,std = scale_nb(nb,std_list)
+    nb_scaled = scale_nb(nb,std_list)
    
     nb_scaled_tList = [nb0_scaled,nb_scaled]
 
@@ -78,7 +79,6 @@ if __name__ == "__main__":
                 cell_id_list.append(ii)
 
         n = len(cell_id_list)
-        Nmin = 20
         jj=0
 
         
@@ -88,10 +88,9 @@ if __name__ == "__main__":
             jj=jj+1
             print(f'DEBUG :: iteration {jj} of {len(cell_id_list)}')
             print(f'DEBBUG :: cell creation')
-            #w_scale_tList = create_w_tList_cell_v8(nb_scale_tList,neighbors,p_id)
-            w_scale_tList = create_w_tList_cell_v9(nb_scaled_tList,neighbors,p_id,Rmax=50)
+            w_scale_tList = create_w_tList_cell(nb_scaled_tList,neighbors,p_id,Rmax=Rmax)
             flag = 0
-            if len(w_scale_tList[0])>Nmin:
+            if len(w_scale_tList[0])<Nmin:
                 flag=1
             else:
                 print('DEBUG : Concave Delaunay Algorithm')

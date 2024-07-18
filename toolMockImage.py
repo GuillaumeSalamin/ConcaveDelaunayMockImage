@@ -45,7 +45,7 @@ def scale_nb(nb,std_List):
     nb.vel[:,0] = nb.vel[:,0]/std_vx
     nb.vel[:,1] = nb.vel[:,1]/std_vy
     nb.vel[:,2] = nb.vel[:,2]/std_vz
-    return nb,[std_x,std_y,std_z,std_vx,std_vy,std_vz]
+    return nb
 
 def PosVel_to_w(nb):
     Nparticle = len(nb.pos)
@@ -106,22 +106,7 @@ def simplex_projection2d(points,ax1,ax2):
     pro7 = [points[6][ax1],points[6][ax2]]
     return [pro1,pro2,pro3,pro4,pro5,pro6,pro7]
 
-def create_w_tList_cell_v8(nb_tList,neighbors,id_particle):
-    
-    #tri0 = Delaunay(PosVel_to_w(nb_tList[0]))
-    id_particle_in_cell = neighbors[id_particle]
-
-    nb_id = []
-    for ii in id_particle_in_cell:
-        nb_id.append(nb_tList[0].num[ii])
-
-    
-    w_tList = []
-    for tt in range(len(nb_tList)):
-        w_tList.append(PosVel_to_w(nb_tList[tt].selectp(nb_id)))
-    return w_tList
-
-def create_w_tList_cell_v9(nb_tList,neighbors,id_particle,Rmax):
+def create_w_tList_cell(nb_tList,neighbors,id_particle,Rmax):
     
     nb0 = nb_tList[0]
     id_particle_in_cell = neighbors[id_particle]
@@ -134,27 +119,6 @@ def create_w_tList_cell_v9(nb_tList,neighbors,id_particle,Rmax):
             nb_id.append(nb_tList[0].num[ii])
 
     
-    w_tList = []
-    for tt in range(len(nb_tList)):
-        w_tList.append(PosVel_to_w(nb_tList[tt].selectp(nb_id)))
-    return w_tList
-
-def create_w_tList_cell_v7(nb_tList,id_particle,tri0,Rmax,Nmax):
-    nb0 = nb_tList[0]
-    nb_id = []
-    dist = []
-    w0 = [nb0.pos[id_particle][0],nb0.pos[id_particle][1],nb0.pos[id_particle][2],nb0.vel[id_particle][0],nb0.vel[id_particle][1],nb0.vel[id_particle][2]]
-    for ii in range(len(nb0.num)):
-        w =   [nb0.pos[ii][0],nb0.pos[ii][1],nb0.pos[ii][2],nb0.vel[ii][0],nb0.vel[ii][1],nb0.vel[ii][2]]
-        dist_tmp = distance6D(w0,w)
-        if dist_tmp<Rmax:
-            nb_id.append(nb_tList[0].num[ii])
-            dist.append(dist_tmp)
-    if len(dist)>Nmax+1:
-        dist_lim = (sorted(dist))[Nmax]
-        nb_id = np.array(nb_id)
-        dist = np.array(dist)
-        nb_id=nb_id[dist<dist_lim]
     w_tList = []
     for tt in range(len(nb_tList)):
         w_tList.append(PosVel_to_w(nb_tList[tt].selectp(nb_id)))
