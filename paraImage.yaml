@@ -8,6 +8,7 @@ triangleFolder: f'/home/astro/ggsalami/ggsalami/TP4b/pythonAnalysis/pythonScript
 
 axe1: 0
 axe2: 2
+halfBoxSize: 200
 
 Rmax: 50 
 Nmin: 20
