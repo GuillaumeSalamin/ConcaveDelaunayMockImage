@@ -1,110 +1,23 @@
 import numpy as np
-import numpy as np
 from scipy.spatial import Delaunay
 import matplotlib.pyplot as plt
 from pNbody import*
-import matplotlib
-matplotlib.rcParams.update({'font.size': 14})
 
-def download_simulation(name,trans,rot):
+import time
 
-
-    nb = Nbody(name,ftype='swift')
-
-    nb.translate(trans)
-    nb.rotate(angle=rot)
-    return nb
-
-def compute_std(nb):
-    x = []
-    y = []
-    z = []
-    vx = []
-    vy = []
-    vz = []
-    for ii in range(len(nb.num)):
-        x.append(nb.pos[ii][0])
-        y.append(nb.pos[ii][1])
-        z.append(nb.pos[ii][2])
-        vx.append(nb.vel[ii][0])
-        vy.append(nb.vel[ii][1])
-        vz.append(nb.vel[ii][2])
-    std_x = np.std(x)
-    std_y = np.std(y)
-    std_z = np.std(z)
-    std_vx = np.std(vx)
-    std_vy = np.std(vy)
-    std_vz = np.std(vz)
-    return [std_x,std_y,std_z,std_vx,std_vy,std_vz]
-
-def scale_nb(nb,std_List):
-    std_x,std_y,std_z,std_vx,std_vy,std_vz = std_List[0],std_List[1],std_List[2],std_List[3],std_List[4],std_List[5]
-    nb.pos[:,0] = nb.pos[:,0]/std_x
-    nb.pos[:,1] = nb.pos[:,1]/std_y
-    nb.pos[:,2] = nb.pos[:,2]/std_z
-    nb.vel[:,0] = nb.vel[:,0]/std_vx
-    nb.vel[:,1] = nb.vel[:,1]/std_vy
-    nb.vel[:,2] = nb.vel[:,2]/std_vz
-    return nb,[std_x,std_y,std_z,std_vx,std_vy,std_vz]
-
-def PosVel_to_w(nb):
-    Nparticle = len(nb.pos)
-    w = []
-
-    for ii in range(Nparticle):
-        w.append([nb.pos[ii][0],nb.pos[ii][1],nb.pos[ii][2],nb.vel[ii][0],nb.vel[ii][1],nb.vel[ii][2]])
-    return w
-
-def find_neighbors(tri):
-    ans = []
-    for ii in range(len(tri.points)):
-        tmp = tri.vertex_neighbor_vertices[1][tri.vertex_neighbor_vertices[0][ii]:tri.vertex_neighbor_vertices[0][ii+1]]
-        ans.append(tmp)
-    return ans
-
-#=============================================================================================================
-#               fonction pour HaloPartialImage
-#=============================================================================================================
-import numpy as np
-from scipy.spatial import Delaunay
-import matplotlib.pyplot as plt
-from pNbody import*
+import sys
+sys.path.append('/home/astro/ggsalami/ggsalami/TP4b/pythonAnalysis')
 
 from concaveDelaunayRefinement import*
 from toolMockImage import*
+from TessFunction import*
+from functionInWork import*
 
 import pickle
 
 import matplotlib
 matplotlib.rcParams.update({'font.size': 14})
 
-def triangleArea(x1,x2,x3):
-    T =1/2*np.abs((x1[0]-x3[0])*(x2[1]-x1[1])-(x1[0]-x2[0])*(x3[1]-x1[1]))
-    return T
-
-def delaunay_volume(tri):
-    points=tri.points
-    vol = []
-    for ii in range(len(tri.simplices)):
-        x1 = points[tri.simplices[ii]][0]
-        x2 = points[tri.simplices[ii]][1]
-        x3 = points[tri.simplices[ii]][2]
-        vol.append(triangleArea(x1,x2,x3))
-    return vol
-
-def distance6D(x1,x2):
-    return np.sqrt((x1[0]-x2[0])**2+(x1[1]-x2[1])**2+(x1[2]-x2[2])**2+(x1[3]-x2[3])**2+(x1[4]-x2[4])**2+(x1[5]-x2[5])**2)
-
-
-def simplex_projection2d(points,ax1,ax2):
-    pro1 = [points[0][ax1],points[0][ax2]]
-    pro2 = [points[1][ax1],points[1][ax2]]
-    pro3 = [points[2][ax1],points[2][ax2]]
-    pro4 = [points[3][ax1],points[3][ax2]]
-    pro5 = [points[4][ax1],points[4][ax2]]
-    pro6 = [points[5][ax1],points[5][ax2]]
-    pro7 = [points[6][ax1],points[6][ax2]]
-    return [pro1,pro2,pro3,pro4,pro5,pro6,pro7]
 
 def create_w_tList_cell_v8(nb_tList,neighbors,id_particle):
     
@@ -213,3 +126,87 @@ def VertexList2d(tri,id_list,ax1,ax2):
             triangle_List = [*triangle_List,*Scale_triangle_2d(vertices)]
             alpha.append(alpha_list[ii][jj])
     return triangle_List,alpha
+
+
+print('scaling data')
+nb_scale_tList = scale_nb_tList(download_simulation_v2())
+
+file_path = '/home/astro/ggsalami/ggsalami/TP4b/pythonAnalysis/pythonSaveVariable/neighbors_v2.pickle'
+with open(file_path, 'rb') as file:
+    # Deserialize and retrieve the variable from the file
+    loaded_data = pickle.load(file)
+
+print("The variable 'data' has been loaded successfully.")
+
+neighbors = loaded_data
+
+file_path = '/home/astro/ggsalami/ggsalami/TP4b/pythonAnalysis/pythonScript/DelaunayTri/tri0.pickle'
+with open(file_path, 'rb') as file:
+    # Deserialize and retrieve the variable from the file
+    loaded_data = pickle.load(file)
+
+print("The variable 'data' has been loaded successfully.")
+
+tri0 = loaded_data
+
+filePara = 0
+
+parameter_a_list = []
+for ii in range(10):
+    parameter_a_list.append(filePara*10+ii)
+
+for parameter_a in parameter_a_list:
+    cell_id_list = []
+    triangle_List = []
+    opacity_list = []
+    data = []
+    for ii in range(len(nb_scale_tList[0].num)):
+        if ii%100==parameter_a:
+            cell_id_list.append(ii)
+
+    n = len(cell_id_list)
+    Nmin = 20
+    jj=0
+
+    
+    #triangle_List2 = []
+    
+    for p_id in cell_id_list:
+        jj=jj+1
+        print(f'DEBUG :: iteration {jj} of {len(cell_id_list)}')
+        print(f'DEBBUG :: cell creation')
+        #w_scale_tList = create_w_tList_cell_v8(nb_scale_tList,neighbors,p_id)
+        w_scale_tList = create_w_tList_cell_v9(nb_scale_tList,neighbors,p_id,Rmax=50)
+        if len(w_scale_tList[0])>Nmin:
+            print('DEBUG : Concave Delaunay Algorithm')
+            index_conserved_simplex_tList,tri_tList,flag_tList = Volume_evolution_Liouville_condition_concave_delaunay_refinements_test(w_scale_tList,error_max=5,verbos=False)
+            flag = flag_tList[-1]
+
+            index_List = index_conserved_simplex_tList[-1]
+            tri = tri_tList[-1]
+            V_cons = delaunay_volume_6D(tri_tList[0])
+
+            if flag==0:
+                tmp,opa = VertexList2d(tri,index_List,ax1=0,ax2=2)
+                opa = opa/V_cons
+                triangle_List = [*triangle_List,*tmp]
+                opacity_list = [*opacity_list,*opa]
+                #for ii in range(len(tri.simplices)):
+                    #if ii in index_List:
+                        #vertices = tri.points[tri.simplices[ii]]
+                        #triangle_List2 = [*triangle_List2,*Scale_triangle(vertices)]
+
+    print(f'number of triangle :: {len(triangle_List)}')
+    name = f'Full_Image_{parameter_a}'
+
+    
+    for ii in range(len(triangle_List)):
+        data.append([triangle_List[ii][0],triangle_List[ii][1],opacity_list[ii//3]])
+
+
+    file_path_data = f'/home/astro/ggsalami/ggsalami/TP4b/pythonAnalysis/pythonScript/totalHalo/triangle3/{name}_data.pickle'
+    with open(file_path_data, 'wb') as file:
+        # Serialize and write the variable to the file
+        pickle.dump(data, file)
+
+    print(f'The variable "data" has been saved successfully. \n File name :: {file_path_data}')

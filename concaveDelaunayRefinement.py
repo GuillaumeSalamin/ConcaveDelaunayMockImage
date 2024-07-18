@@ -184,7 +184,7 @@ def Find_simplex_list_target_volume_concave_delaunay_refinement(target_volume,tr
     print(f'DV/V = {np.abs(target_volume-vol)/(target_volume)*100}%')
     return index_List, flag
 
-def Volume_evolution_Liouville_condition_concave_delaunay_refinements_test(w_tList,error_max,verbos=True):
+def Volume_evolution_Liouville_condition_concave_delaunay_refinements(w_tList,error_max,verbos=True):
     """
     def Volume_evolution_Liouville_condition_concave_delaunay_refinements(w_tList):
     take an list of set of points and use the Liouville theorem to comput the volume at each different time frame.
