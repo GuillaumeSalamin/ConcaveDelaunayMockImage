@@ -33,6 +33,7 @@ if __name__ == "__main__":
     axe2 = para["axe2"]
     Nmin = para["Nmin"]
     Rmax = para["Rmax"]
+    halfBoxSize = para["halfBoxSize"]
 
 
     print('scaling data')
@@ -103,7 +104,7 @@ if __name__ == "__main__":
                 V_cons = delaunay_volume_6D(tri_tList[0])
 
                 if flag==0:
-                    tmp,opa = VertexList2d(tri,index_List,ax1=axe1,ax2=axe2)
+                    tmp,opa = VertexList2d(tri,std_list,index_List,axe1,axe2,halfBoxSize)
                     opa = opa/V_cons
                     triangle_List = [*triangle_List,*tmp]
                     opacity_list = [*opacity_list,*opa]
