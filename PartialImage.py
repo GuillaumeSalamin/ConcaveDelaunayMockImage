@@ -3,6 +3,8 @@ from scipy.spatial import Delaunay
 import matplotlib.pyplot as plt
 from pNbody import*
 
+from DrawFunction import*
+
 from concaveDelaunayRefinement import*
 from toolMockImage import*
 
@@ -28,7 +30,7 @@ if __name__ == "__main__":
     triName = para["triSaveName"]
     NeighborsName = para["NeighborsSaveName"]
     InitialFrame = para["InitialFrameName"]
-    triangleFolder = para["triangleFolder"]
+    MatrixFolder = para["MatrixFolder"]
     axe1 = para["axe1"]
     axe2 = para["axe2"]
     Nmin = para["Nmin"]
@@ -66,15 +68,15 @@ if __name__ == "__main__":
 
     filePara = int(sys.argv[1])
 
+    
+
     parameter_a_list = []
     for ii in range(10):
         parameter_a_list.append(filePara*10+ii)
 
     for parameter_a in parameter_a_list:
         cell_id_list = []
-        triangle_List = []
-        opacity_list = []
-        data = []
+        ImageMatrix = np.zeros((600,800))
         for ii in range(len(nb_scaled_tList[0].num)):
             if ii%100==parameter_a:
                 cell_id_list.append(ii)
@@ -82,8 +84,6 @@ if __name__ == "__main__":
         n = len(cell_id_list)
         jj=0
 
-        
-        #triangle_List2 = []
         
         for p_id in cell_id_list:
             jj=jj+1
@@ -106,27 +106,18 @@ if __name__ == "__main__":
                 if flag==0:
                     tmp,opa = VertexList2d(tri,std_list,index_List,axe1,axe2,halfBoxSize)
                     opa = opa/V_cons
-                    triangle_List = [*triangle_List,*tmp]
-                    opacity_list = [*opacity_list,*opa]
-                    #for ii in range(len(tri.simplices)):
-                        #if ii in index_List:
-                            #vertices = tri.points[tri.simplices[ii]]
-                            #triangle_List2 = [*triangle_List2,*Scale_triangle(vertices)]
+                    for ii in range(len(tmp)):
+                        mat = triangleDraw(tmp[ii],opa[ii])
+                        ImageMatrix +=mat
+                    
             if flag==1:
-                # code to add light in an other wy
                 print('flag=1')
 
-        print(f'number of triangle :: {len(triangle_List)}')
-        name = f'Full_Image_{parameter_a}'
+        name = f'Partial_Image_{parameter_a}'
 
-        
-        for ii in range(len(triangle_List)):
-            data.append([triangle_List[ii][0],triangle_List[ii][1],opacity_list[ii//3]])
-
-
-        file_path_data = f'{triangleFolder}{name}_data.pickle'
+        file_path_data = f'{MatrixFolder}{name}_data.pickle'
         with open(file_path_data, 'wb') as file:
             # Serialize and write the variable to the file
-            pickle.dump(data, file)
+            pickle.dump(ImageMatrix, file)
 
         print(f'The variable "data" has been saved successfully. \n File name :: {file_path_data}')
