@@ -25,8 +25,12 @@ rot = data["rotation"]
 print('Download Data')
 
 #Download data
+nb0 = download_simulation(name,trans,rot)
+std_list = compute_std(nb0)
+nb0_scaled,std = scale_nb(nb0)
+
 nb = download_simulation(name,trans,rot)
-nb_scaled,std = scale_nb(nb)
+nb_scaled,std = scale_nb(nb,std_list)
 
 print('Make triangulation')
 tri0 = Delaunay(PosVel_to_w(nb_scaled))

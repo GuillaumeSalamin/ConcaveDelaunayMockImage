@@ -23,6 +23,13 @@ def dist6d(px1,py1,pz1,vx1,vy1,vz1,px2,py2,pz2,vx2,vy2,vz2,nb):
 
    return d
 
+#def distance6D(w1,w2):
+#   d = 0
+#   for ii in range(6):
+#       d += np.power(w1[ii]-w2[ii],2)
+#   d = np.sqrt(d)
+#   return d
+
 def NRandom(N,d):
     w = np.zeros((N,d))
     for ii in range(d):
