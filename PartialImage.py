@@ -3,6 +3,8 @@ from scipy.spatial import Delaunay
 import matplotlib.pyplot as plt
 from pNbody import*
 
+from DrawFunction import*
+
 from concaveDelaunayRefinement import*
 from toolMockImage import*
 
@@ -28,7 +30,7 @@ if __name__ == "__main__":
     triName = para["triSaveName"]
     NeighborsName = para["NeighborsSaveName"]
     InitialFrame = para["InitialFrameName"]
-    triangleFolder = para["triangleFolder"]
+    MatrixFolder = para["MatrixFolder"]
     axe1 = para["axe1"]
     axe2 = para["axe2"]
     Nmin = para["Nmin"]
@@ -66,6 +68,8 @@ if __name__ == "__main__":
 
     filePara = int(sys.argv[1])
 
+    
+
     parameter_a_list = []
     for ii in range(10):
         parameter_a_list.append(filePara*10+ii)
@@ -82,8 +86,6 @@ if __name__ == "__main__":
         n = len(cell_id_list)
         jj=0
 
-        
-        #triangle_List2 = []
         
         for p_id in cell_id_list:
             jj=jj+1
@@ -104,18 +106,15 @@ if __name__ == "__main__":
                 V_cons = delaunay_volume_6D(tri_tList[0])
 
                 if flag==0:
-                    tmp,opa = VertexList2d(tri,std_list,index_List,axe1,axe2,halfBoxSize)
+                    tmp,opa = VertexList2d(tri,index_List,ax1=0,ax2=2)
                     opa = opa/V_cons
                     triangle_List = [*triangle_List,*tmp]
                     opacity_list = [*opacity_list,*opa]
-                    #for ii in range(len(tri.simplices)):
-                        #if ii in index_List:
-                            #vertices = tri.points[tri.simplices[ii]]
-                            #triangle_List2 = [*triangle_List2,*Scale_triangle(vertices)]
+                    
             if flag==1:
-                # code to add light in an other wy
                 print('flag=1')
 
+        name = f'Partial_Image_{parameter_a}'
         print(f'number of triangle :: {len(triangle_List)}')
         name = f'Full_Image_{parameter_a}'
 
@@ -124,7 +123,7 @@ if __name__ == "__main__":
             data.append([triangle_List[ii][0],triangle_List[ii][1],opacity_list[ii//3]])
 
 
-        file_path_data = f'{triangleFolder}{name}_data.pickle'
+        file_path_data = f'/home/astro/ggsalami/ggsalami/TP4b/pythonAnalysis/pythonScript/totalHalo/triangle3/{name}_data.pickle'
         with open(file_path_data, 'wb') as file:
             # Serialize and write the variable to the file
             pickle.dump(data, file)

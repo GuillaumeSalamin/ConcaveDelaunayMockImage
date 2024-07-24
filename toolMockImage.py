@@ -226,6 +226,8 @@ def Scale_triangle_2d(vertex,std_List,ax1,ax2,halfBoxSize):
         vertex[ii][0] = vertex[ii][0]/halfBoxSize*std_List[ax1]
         vertex[ii][1] = vertex[ii][1]/halfBoxSize*std_List[ax2]
     return vertex
+    #triangle = [vertex[0][0]/halfBoxSize*std_List[ax1],vertex[0][1]/halfBoxSize*std_List[ax2],vertex[1][0]/halfBoxSize*std_List[ax1],vertex[1][1]/halfBoxSize*std_List[ax2],vertex[2][0]/halfBoxSize*std_List[ax1],vertex[2][1]/halfBoxSize*std_List[ax2]]
+    #return triangle
 
 def projection_6d_to_2d(tri,id_list,ax1,ax2):
     """
