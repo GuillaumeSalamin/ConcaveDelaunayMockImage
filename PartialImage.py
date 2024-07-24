@@ -76,7 +76,9 @@ if __name__ == "__main__":
 
     for parameter_a in parameter_a_list:
         cell_id_list = []
-        ImageMatrix = np.zeros((600,800))
+        triangle_List = []
+        opacity_list = []
+        data = []
         for ii in range(len(nb_scaled_tList[0].num)):
             if ii%100==parameter_a:
                 cell_id_list.append(ii)
@@ -104,20 +106,26 @@ if __name__ == "__main__":
                 V_cons = delaunay_volume_6D(tri_tList[0])
 
                 if flag==0:
-                    tmp,opa = VertexList2d(tri,std_list,index_List,axe1,axe2,halfBoxSize)
+                    tmp,opa = VertexList2d(tri,index_List,ax1=0,ax2=2)
                     opa = opa/V_cons
-                    for ii in range(len(tmp)):
-                        mat = triangleDraw(tmp[ii],opa[ii])
-                        ImageMatrix +=mat
+                    triangle_List = [*triangle_List,*tmp]
+                    opacity_list = [*opacity_list,*opa]
                     
             if flag==1:
                 print('flag=1')
 
         name = f'Partial_Image_{parameter_a}'
+        print(f'number of triangle :: {len(triangle_List)}')
+        name = f'Full_Image_{parameter_a}'
 
-        file_path_data = f'{MatrixFolder}{name}_data.pickle'
+        
+        for ii in range(len(triangle_List)):
+            data.append([triangle_List[ii][0],triangle_List[ii][1],opacity_list[ii//3]])
+
+
+        file_path_data = f'/home/astro/ggsalami/ggsalami/TP4b/pythonAnalysis/pythonScript/totalHalo/triangle3/{name}_data.pickle'
         with open(file_path_data, 'wb') as file:
             # Serialize and write the variable to the file
-            pickle.dump(ImageMatrix, file)
+            pickle.dump(data, file)
 
         print(f'The variable "data" has been saved successfully. \n File name :: {file_path_data}')
