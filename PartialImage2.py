@@ -74,7 +74,7 @@ if __name__ == "__main__":
     for parameter_a in parameter_a_list:
         cell_id_list = []
         triangle_List = []
-        opacity_list = []
+        cell_src = []
         data = []
         for ii in range(len(nb_scaled_tList[0].num)):
             if ii%100==parameter_a:
@@ -105,14 +105,9 @@ if __name__ == "__main__":
                 V_cons = delaunay_volume_6D(tri_tList[0])
 
                 if flag==0:
-                    tmp,opa = VertexList2d(tri,std_list,index_List,axe1,axe2,halfBoxSize)
-                    opa = opa/V_cons
-                    triangle_List = [*triangle_List,*tmp]
-                    opacity_list = [*opacity_list,*opa]
-                    #for ii in range(len(tri.simplices)):
-                        #if ii in index_List:
-                            #vertices = tri.points[tri.simplices[ii]]
-                            #triangle_List2 = [*triangle_List2,*Scale_triangle(vertices)]
+                    for ii in index_List:
+                        triangle_List.append(tri.points[tri.simplices[ii]])
+                        cell_src.append(p_id)
             if flag==1:
                 # code to add light in an other wy
                 print('flag=1')
@@ -122,7 +117,7 @@ if __name__ == "__main__":
 
         
         for ii in range(len(triangle_List)):
-            data.append([triangle_List[ii][0],triangle_List[ii][1],opacity_list[ii//3]])
+            data.append([triangle_List[ii],cell_src[ii]])
 
 
         file_path_data = f'{triangleFolder}{name}_data.pickle'
