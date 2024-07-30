@@ -25,8 +25,8 @@ def download_simulation(name,trans,rot):
 
     nb = Nbody(name,ftype='swift')
 
-    nb = nb.translate(trans)
-    nb = nb.rotate(angle=rot)
+    nb.translate(trans)
+    #nb.rotate(angle=rot)
     return nb
 
 def compute_std(nb):
