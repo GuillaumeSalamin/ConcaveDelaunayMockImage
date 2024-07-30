@@ -48,7 +48,6 @@ if __name__ == "__main__":
 
     file_path = NeighborsName
     with open(file_path, 'rb') as file:
-        # Deserialize and retrieve the variable from the file
         loaded_data = pickle.load(file)
 
     print("The variable 'Neighbors' has been loaded successfully.")
@@ -57,7 +56,6 @@ if __name__ == "__main__":
 
     file_path = triName
     with open(file_path, 'rb') as file:
-        # Deserialize and retrieve the variable from the file
         loaded_data = pickle.load(file)
 
     print("The variable 'Tri' has been loaded successfully.")
@@ -82,9 +80,6 @@ if __name__ == "__main__":
 
         n = len(cell_id_list)
         jj=0
-
-        
-        #triangle_List2 = []
         
         for p_id in cell_id_list:
             jj=jj+1
@@ -109,23 +104,19 @@ if __name__ == "__main__":
                     opa = opa/V_cons
                     triangle_List = [*triangle_List,*tmp]
                     opacity_list = [*opacity_list,*opa]
-                    #for ii in range(len(tri.simplices)):
-                        #if ii in index_List:
-                            #vertices = tri.points[tri.simplices[ii]]
-                            #triangle_List2 = [*triangle_List2,*Scale_triangle(vertices)]
             if flag==1:
-                # code to add light in an other wy
+                # code to add light in an other way
                 print('flag=1')
 
         print(f'number of triangle :: {len(triangle_List)}')
-        name = f'Full_Image_{parameter_a}'
+        name = f'Partial_Image_{parameter_a}'
 
         
         for ii in range(len(triangle_List)):
             data.append([triangle_List[ii][0],triangle_List[ii][1],opacity_list[ii//3]])
 
 
-        file_path_data = f'{triangleFolder}{name}_data.pickle'
+        file_path_data = f'{triangleFolder}/{name}_data.pickle'
         with open(file_path_data, 'wb') as file:
             # Serialize and write the variable to the file
             pickle.dump(data, file)

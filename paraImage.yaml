@@ -4,7 +4,7 @@ translation: [-500,-500,-500]
 rotation: 0
 triSaveName: '/home/astro/ggsalami/ggsalami/TP4b/ConcaveDelaunayMockImage/saveVariable/tri0.pickle'
 NeighborsSaveName: '/home/astro/ggsalami/ggsalami/TP4b/ConcaveDelaunayMockImage/saveVariable/neighbors.pickle'
-triangleFolder: f'/home/astro/ggsalami/ggsalami/TP4b/ConcaveDelaunayMockImage/saveVariable/triangle/'
+triangleFolder: '/home/astro/ggsalami/ggsalami/TP4b/ConcaveDelaunayMockImage/saveVariable/triangle'
 
 axe1: 0
 axe2: 2
@@ -12,3 +12,5 @@ halfBoxSize: 200
 
 Rmax: 50 
 Nmin: 20
+
+ImagePath: "/home/astro/ggsalami/ggsalami/TP4b/ConcaveDelaunayMockImage/saveVariable/image"
