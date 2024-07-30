@@ -11,7 +11,7 @@ import os
 os.environ["SDL_VIDEO_X11_FORCE_EGL"] = "1"
 
 class App:
-    def __init__(self, width=640, height=400,triangle_para=0):
+    def __init__(self, data, width=640, height=400,alpha=1):
         self.width = width
         self.height = height
 
@@ -38,7 +38,7 @@ class App:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         # Initialize the triangle
-        self.triangle = MultripleTriangle(int(triangle_para))
+        self.triangle = MultripleTriangle(data,alpha)
         self.shader = self.triangle.createShader()
         glUseProgram(self.shader)
 
@@ -57,8 +57,9 @@ class App:
         #pixels = glReadPixels(0, 0, self.width, self.height, GL_RGBA, GL_UNSIGNED_BYTE)
         #image = np.frombuffer(pixels, dtype=np.uint8).reshape(self.height, self.width, 4)
         #image = np.flipud(image)  # Flip the image vertically
-        pixels = np.empty((self.height, self.width, 4), dtype=np.float32)
-        glReadPixels(0, 0, self.width, self.height, GL_RGBA, GL_FLOAT, pixels)
+        pixels = np.empty((self.height, self.width, 4), dtype=np.uint8)
+        #glReadPixels(0, 0, self.width, self.height, GL_RGBA, GL_FLOAT, pixels)
+        glReadPixels(0, 0, self.width, self.height, GL_RGBA, GL_UNSIGNED_BYTE, pixels)
 
         return pixels[:, :, 0]#image
 
@@ -69,14 +70,9 @@ class App:
         glfw.terminate()
 
 class MultripleTriangle:
-    def __init__(self, file_path):
+    def __init__(self, data,alpha):
 
         
-        with open(file_path, 'rb') as file:
-            # Deserialize and retrieve the variable from the file
-           data = pickle.load(file)
-
-        #print(f'The variable data_{tri_para} has been loaded successfully.')
 
         self.num_triangles = len(data)//3
 
@@ -88,9 +84,9 @@ class MultripleTriangle:
             base_index = ii * 3
 
             self.vertices.extend([
-                data[3*ii][0], data[3*ii][1], 0.0, data[3*ii][2],
-                data[3*ii+1][0], data[3*ii+1][1], 0.0, data[3*ii+1][2],
-                data[3*ii+2][0], data[3*ii+2][1], 0.0, data[3*ii+2][2] 
+                data[3*ii][0], data[3*ii][1], 0.0, data[3*ii][2]*alpha,
+                data[3*ii+1][0], data[3*ii+1][1], 0.0, data[3*ii+1][2]*alpha,
+                data[3*ii+2][0], data[3*ii+2][1], 0.0, data[3*ii+2][2]*alpha 
             ])
 
             self.indices.extend([
@@ -160,6 +156,18 @@ class MultripleTriangle:
         glDeleteBuffers(1, (self.vbo,))
         glDeleteBuffers(1, (self.ebo,))
 
+def adapt_satured_image(matrix,alpha):
+    ans = np.zeros((1000,1000))
+    for ii in range(1000):
+        for jj in range(1000):
+            tmp = matrix[ii,jj]
+            if tmp>=256*alpha:
+                ans[ii,jj] = 0
+            else:
+                ans[ii,jj] = tmp/alpha
+    return ans
+
+
 if __name__ == "__main__":
     with open("paraImage.yaml") as stream:
         try:
@@ -171,18 +179,47 @@ if __name__ == "__main__":
     ImagePath = para["ImagePath"]
 
 
-    matrix = np.zeros((400,640))
-    for ii in range(9):
-        file_path_ = f'{triangleFolder}/Partial_Image_{ii}_data.pickle'
+    matrix = np.zeros((1000,1000))
+    for ii in range(100):#[10,11,12,13,14,15,16]:
         print(f'{ii+1}/100')
-        app = App(width=640, height=400,triangle_para=ii)
+        file_path = f'{ImagePath}/Partial_Image_{ii}_data.pickle'
+        with open(file_path, 'rb') as file:
+            # Deserialize and retrieve the variable from the file
+           data = pickle.load(file)
+
+        #print(f'The variable data_{ii} has been loaded successfully.')
+
+        app = App(data,width=1000, height=1000,alpha=1)
         image = app.render_to_image()
         matrix+=image
+        
+        del image
+        app.destroy()
+
+        app = App(data,width=1000, height=1000,alpha=256)
+        image = adapt_satured_image(app.render_to_image(),256)
+        matrix+=image
+        del data
+        del image
+
+
     plt.matshow(matrix, cmap='gray')  # Display only alpha channel
     plt.axis('off')  # Turn off axes
     plt.title('Alpha Channel')
     plt.gca().invert_yaxis()
-    plt.savefig(f'{ImagePath}/Test1.png')
+    plt.savefig(f'{ImagePath}/img_linear.png')
     plt.show()
-    app.destroy()
+
+    plt.matshow(matrix, cmap='gray',norm='log')  # Display only alpha channel
+    plt.axis('off')  # Turn off axes
+    plt.title('Alpha Channel')
+    plt.gca().invert_yaxis()
+    #plt.gca().set_facecolor('black')
+    plt.savefig(f'{ImagePath}/img_log.png')
+    plt.show()
+
+    file_path_data = f'{ImagePath}/matrix.pickle' 
+    with open(file_path_data, 'wb') as file:
+        # Serialize and write the variable to the file
+        pickle.dump(matrix, file)
 
