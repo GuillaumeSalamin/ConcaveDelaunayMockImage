@@ -29,8 +29,8 @@ nb0 = download_simulation(InitialFrame,trans)
 std_list = compute_std(nb0)
 nb0_scaled = scale_nb(nb0,std_list)
 
-nb = download_simulation(name,trans)
-nb_scaled = scale_nb(nb,std_list)
+#nb = download_simulation(name,trans)
+#nb_scaled = scale_nb(nb,std_list)
 
 print('Make triangulation')
 tri0 = Delaunay(PosVel_to_w(nb0_scaled))

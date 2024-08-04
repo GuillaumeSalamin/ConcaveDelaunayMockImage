@@ -205,3 +205,81 @@ def create_w_tList_cell(nb_tList,neighbors,id_particle,Rmax):
         w_tList.append(PosVel_to_w(nb_tList[tt].selectp(nb_id)))
     return w_tList
 
+
+def Scale_triangle_2d(vertex,std_List,ax1,ax2,halfBoxSize):
+    """
+    def Scale_triangle_2d(vertex,std_List,ax1,ax2,halfBoxSize):
+    
+    this function scale the triangle's vertex to be projected. First std_list is use again to scale each coordinate to his true value. Then halfBoxSize is used such as all particle between [-halfBoxSize,halfBoxSize] is between [-1,1] to be prjected by pyOpenGl.
+    The image will include particle with coordinate in [-halfBoxSize,halfBoxSize].
+    input:
+        - vertex : list of vertex of the projected triangle. List of 2 dimensional array
+        - std_List : List [std_x,std_y,std_z,std_vx,std_vy,std_vz] compute by compute_std(nb)
+        - ax1 : axe of x coordinate of the image
+        - ax2 : axe of y coordinate of the image
+        - halfBoxSize : the half of the boxSize of the image (in Unit of the simulation)
+    return:
+        - List of vertex scale by halfBoxSize from the original value in the simulation
+    """
+    #print("Scale_triangle_2d")
+    for ii in range(len(vertex)):
+        vertex[ii][0] = vertex[ii][0]/halfBoxSize*std_List[ax1]
+        vertex[ii][1] = vertex[ii][1]/halfBoxSize*std_List[ax2]
+    return vertex
+
+def projection_6d_to_2d(tri,id_list,ax1,ax2):
+    """
+    def projection_6d_to_2d(tri,id_list,ax1,ax2):
+    
+        fonction to compute the projection
+
+    input: 
+        - tri : Delaunay triangulation of the image frame
+        - id_list : id_list of the simplices in the concave refinement obtain with concaveDelaunayRefinement.py
+        - ax1 : axe of x coordinate of the image
+        - ax2 : axe of y coordinate of the image
+    return:
+        - tri2d_list: List of Delaunay triangulation in two dimension. The triangle of the triangulation are the triangle to display
+        - for each triangle, a parameter alpha (matrix of float) representing it's intensity (abitrary unit). (it's a matrix alpha[trianglulation][triangle of the triangulation])
+    """
+    #print("projection_6d_to_2d")
+    tri2d_list = []
+    alpha_list = []
+    jj=0
+    n=len(id_list)
+    for ii in id_list:
+        jj=jj+1
+        V = Tetrahedron6DVolume(tri.points[tri.simplices[ii]])
+        w2d = simplex_projection2d(tri.points[tri.simplices[ii]],ax1,ax2)
+        tri2d = Delaunay(w2d)
+        V2d_ListSimplices = delaunay_volume(tri2d)
+        V2d = np.sum(V2d_ListSimplices)
+        for ii in range(len(V2d_ListSimplices)):
+            V2d_ListSimplices[ii] = V/V2d
+        alpha = V2d_ListSimplices
+        tri2d_list.append(tri2d)
+        alpha_list.append(alpha)
+    return tri2d_list,alpha_list
+
+def VertexList2d(tri,std_List,id_list,ax1,ax2,halfBoxSize):
+    """
+    input: 
+        - tri : Delaunay triangulation of the image frame
+        - id_list : id_list of the simplices in the concave refinement obtain with concaveDelaunayRefinement.py
+        - ax1 : axe of x coordinate of the image
+        - ax2 : axe of y coordinate of the image
+        - halfBoxSize: the image will contain particle in [-halfBoxSize,halfBoxSize]
+    return:
+        - triangle_List: List of triangle (three two-dimensonal array) to display
+        - for each triangle, a parameter alpha (float) representing it's intensity (abitrary unit)
+    """
+    #print("vertexList2d")
+    triangle_List = []
+    alpha = []
+    tri2d_list,alpha_list = projection_6d_to_2d(tri,id_list,ax1,ax2)
+    for ii in range(len(tri2d_list)):
+        for jj in range(len(tri2d_list[ii].simplices)):
+            vertices = tri2d_list[ii].points[tri2d_list[ii].simplices[jj]]
+            triangle_List = [*triangle_List,*Scale_triangle_2d(vertices,std_List,ax1,ax2,halfBoxSize)]
+            alpha.append(alpha_list[ii][jj])
+    return triangle_List,alpha

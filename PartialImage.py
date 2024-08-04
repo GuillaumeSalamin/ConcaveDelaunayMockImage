@@ -48,7 +48,7 @@ halfBoxSize = para["halfBoxSize"]
 
 
 print('scaling data')
-nb0 = download_simulation(name,trans)
+nb0 = download_simulation(InitialFrame,trans)
 std_list = compute_std(nb0)
 nb0_scaled = scale_nb(nb0,std_list)
 
@@ -76,9 +76,9 @@ tri0 = loaded_data
 filePara = int(sys.argv[1])
 
 parameter_a_list = []
-#for ii in range(10):
-#    parameter_a_list.append(filePara*10+ii)
-parameter_a_list.append(filePara)
+for ii in range(10):
+    parameter_a_list.append(filePara*10+ii)
+#parameter_a_list.append(filePara)
 
 for parameter_a in parameter_a_list:
     cell_id_list = []
@@ -120,7 +120,7 @@ for parameter_a in parameter_a_list:
         if flag==1:
             # code to add light in an other way
             print('flag=1')
-    """
+    
     print(f'number of triangle :: {len(triangle_List)}')
     name = f'Partial_Image_{parameter_a}'
 
@@ -134,4 +134,4 @@ for parameter_a in parameter_a_list:
         # Serialize and write the variable to the file
         pickle.dump(data, file)
 
-    print(f'The variable "data" has been saved successfully. \n File name :: {file_path_data}')"""
+    print(f'The variable "data" has been saved successfully. \n File name :: {file_path_data}')
