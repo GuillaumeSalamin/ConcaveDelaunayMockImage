@@ -20,20 +20,20 @@ with open("paraImage.yaml") as stream:
 
 name = data["SimulationName"]
 trans = data["translation"]
-rot = data["rotation"]
+InitialFrame = data["InitialFrameName"]
 
 print('Download Data')
 
 #Download data
-nb0 = download_simulation(name,trans,rot)
+nb0 = download_simulation(InitialFrame,trans)
 std_list = compute_std(nb0)
 nb0_scaled = scale_nb(nb0,std_list)
 
-nb = download_simulation(name,trans,rot)
+nb = download_simulation(name,trans)
 nb_scaled = scale_nb(nb,std_list)
 
 print('Make triangulation')
-tri0 = Delaunay(PosVel_to_w(nb_scaled))
+tri0 = Delaunay(PosVel_to_w(nb0_scaled))
 
 print('Delaunay triangulation done')
 file_path = data["triSaveName"]
