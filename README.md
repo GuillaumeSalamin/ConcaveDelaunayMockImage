@@ -19,18 +19,18 @@ Nmin: nombre minimum de particules dans une cellules pour la considéré comme v
 
 ImagePath: Path (location+nom) de l'image qui sera crée
 
-### Comment exécuter le code
-Le script CreateTri.py doit être lancé en premier.
-D'une fois se fichier ayant terminer sont exécution, PartialImage.py doit être lancer avec les paramètre de 0 à 9
-python CreateTri.py
-d'une fois terminer 
-python PartialImage.py 0
-python PartialImage.py 1
-python PartialImage.py 2
-python PartialImage.py 3
-....
-python PartialImage.py 9
-
+### Comment exécuter le code<br />
+Le script CreateTri.py doit être lancé en premier.<br />
+D'une fois se fichier ayant terminer sont exécution, PartialImage.py doit être lancer avec les paramètre de 0 à 9<br />
+python CreateTri.py<br />
+d'une fois terminer <br />
+python PartialImage.py 0<br />
+python PartialImage.py 1<br />
+python PartialImage.py 2<br />
+python PartialImage.py 3<br />
+....<br />
+python PartialImage.py 9<br />
+<br />
 cela créera tout les fichier triangles nécessaire à la création de l'image
 d'une fois tout les fichier triangle crée, exécuter BuildImage.py
 python BuildImage.py
