@@ -180,9 +180,10 @@ if __name__ == "__main__":
 
 
     matrix = np.zeros((1000,1000))
-    for ii in range(100):#[10,11,12,13,14,15,16]:
+    for ii in range(30):#[10,11,12,13,14,15,16]:
         print(f'{ii+1}/100')
-        file_path = f'{ImagePath}/Partial_Image_{ii}_data.pickle'
+        file_path = f'{triangleFolder}/Partial_Image_{ii}_data.pickle'
+        
         with open(file_path, 'rb') as file:
             # Deserialize and retrieve the variable from the file
            data = pickle.load(file)
