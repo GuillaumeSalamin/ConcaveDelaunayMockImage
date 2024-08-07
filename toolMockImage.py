@@ -12,21 +12,19 @@ Les méthode propre au Concave Delaunay refinement sont dans un autre fichier (c
 Ce fichier contient tout les fonctions nécessaire à la création de Mock Image uniquement. Se sont principalement des function 'utilitaire'.
 """
 
-def download_simulation(name,trans,rot):
+def download_simulation(name,trans):
     """
     def download_simulation(name,trans,rot):
     Download un fichier hdf5 contenant une snapshot de Nbody simulation.
     La function utilise pNbody et la simulation doit provenir du code SWIFT.
     - name : string du path au ficheir hdf5
-    - trans : vecteur [x,y,z] de la translation de la simulation avec pNbody, nb = nb.translate(trans) (le code a besoin que les particules soit centrer en (0,0,0))
-    - rota : angle de rotation de pNbody, nb = nb.rotate(angle=rot)
+    - trans : vecteur [x,y,z] de la translation de la simulation avec pNbody, nb.translate(trans) (le code a besoin que les particules soit centrer en (0,0,0))
     """
 
 
     nb = Nbody(name,ftype='swift')
 
-    nb = nb.translate(trans)
-    nb = nb.rotate(angle=rot)
+    nb.translate(trans)
     return nb
 
 def compute_std(nb):
@@ -101,7 +99,7 @@ def find_neighbors(tri):
     return ans
 
 #=============================================================================================================
-#               fonction pour HaloPartialImage
+#               fonction pour PartialImage
 #=============================================================================================================
 import numpy as np
 from scipy.spatial import Delaunay
@@ -207,6 +205,7 @@ def create_w_tList_cell(nb_tList,neighbors,id_particle,Rmax):
         w_tList.append(PosVel_to_w(nb_tList[tt].selectp(nb_id)))
     return w_tList
 
+
 def Scale_triangle_2d(vertex,std_List,ax1,ax2,halfBoxSize):
     """
     def Scale_triangle_2d(vertex,std_List,ax1,ax2,halfBoxSize):
@@ -222,6 +221,7 @@ def Scale_triangle_2d(vertex,std_List,ax1,ax2,halfBoxSize):
     return:
         - List of vertex scale by halfBoxSize from the original value in the simulation
     """
+    #print("Scale_triangle_2d")
     for ii in range(len(vertex)):
         vertex[ii][0] = vertex[ii][0]/halfBoxSize*std_List[ax1]
         vertex[ii][1] = vertex[ii][1]/halfBoxSize*std_List[ax2]
@@ -244,6 +244,7 @@ def projection_6d_to_2d(tri,id_list,ax1,ax2):
         - tri2d_list: List of Delaunay triangulation in two dimension. The triangle of the triangulation are the triangle to display
         - for each triangle, a parameter alpha (matrix of float) representing it's intensity (abitrary unit). (it's a matrix alpha[trianglulation][triangle of the triangulation])
     """
+    #print("projection_6d_to_2d")
     tri2d_list = []
     alpha_list = []
     jj=0
@@ -274,6 +275,7 @@ def VertexList2d(tri,std_List,id_list,ax1,ax2,halfBoxSize):
         - triangle_List: List of triangle (three two-dimensonal array) to display
         - for each triangle, a parameter alpha (float) representing it's intensity (abitrary unit)
     """
+    #print("vertexList2d")
     triangle_List = []
     alpha = []
     tri2d_list,alpha_list = projection_6d_to_2d(tri,id_list,ax1,ax2)

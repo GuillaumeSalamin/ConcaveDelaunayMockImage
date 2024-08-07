@@ -1,10 +1,9 @@
-SimulationName: "/srv/astro/projects/clastro/revaz/ARRAKIHS/SWIFT_UFDS_TidalStripping/Sims/DW103/snap/snapshot_65_stars.hdf5"
-InitialFrameName: '/srv/astro/projects/clastro/revaz/ARRAKIHS/SWIFT_UFDS_TidalStripping/Sims/DW103/snap/snapshot_0_stars.hdf5'
+SimulationName: "/srv/astro/projects/clastro/revaz/ARRAKIHS/SWIFT_UFDS_TidalStripping/Sims/DW103/snap/snapshot_0066_stars.hdf5"
+InitialFrameName: "/srv/astro/projects/clastro/revaz/ARRAKIHS/SWIFT_UFDS_TidalStripping/Sims/DW103/snap/snapshot_0000_stars.hdf5"
 translation: [-500,-500,-500]
-rotation: 0
-triSaveName: '/home/astro/ggsalami/ggsalami/TP4b/pythonAnalysis/pythonScript/DelaunayTri/tri0.pickle'
-NeighborsSaveName: '/home/astro/ggsalami/ggsalami/TP4b/pythonAnalysis/pythonSaveVariable/neighbors_v2.pickle'
-MatrixFolder: f'/home/astro/ggsalami/ggsalami/TP4b/pythonAnalysis/pythonScript/totalHalo/triangle3/'
+triSaveName: "/home/astro/ggsalami/ggsalami/TP4b/ConcaveDelaunayMockImage/saveVariable/tri0.pickle"
+NeighborsSaveName: "/home/astro/ggsalami/ggsalami/TP4b/ConcaveDelaunayMockImage/saveVariable/neighbors.pickle"
+triangleFolder: "/home/astro/ggsalami/ggsalami/TP4b/ConcaveDelaunayMockImage/saveVariable/triangle"
 
 axe1: 0
 axe2: 2
@@ -12,3 +11,5 @@ halfBoxSize: 200
 
 Rmax: 50 
 Nmin: 20
+
+ImagePath: "/home/astro/ggsalami/ggsalami/TP4b/ConcaveDelaunayMockImage/saveVariable/image"
