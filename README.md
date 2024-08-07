@@ -34,3 +34,14 @@ python PartialImage.py 9<br />
 cela créera tous les fichiers triangles nécessaires à la création de l'image
 d'une fois tous les fichiers triangle crée, exécuter BuildImage.py<br />
 python BuildImage.py
+
+## Prérequis<br />
+Python3<br />
+pNbody<br />
+numpy<br />
+matplolib<br />
+scipy<br />
+pickle<br />
+yaml<br />
+glfw<br />
+pyOpenGl<br />
