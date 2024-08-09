@@ -1,6 +1,6 @@
 # ConcaveDelaunayMockImage
 
-Code pour utilise crée des mock images depuis des Nbody simulation. 
+Code pour crée des mock images depuis des Nbody simulation. 
 Tous les paramètres doivent être rentrés dans paraImage.yaml
 
 ### paraImage.yaml <br />
@@ -14,10 +14,10 @@ axe1: premier axe de l'image<br />
 axe2: second axe de l'image (1=x, 2=y, 3=z)<br />
 halfBoxSize: taille de l'image (en unité de la simulation)<br />
 
-Rmax: paramètre déterminant la taille maximum des cellules créée dans l'algorithme (le plus grand possible est la meilleure option, mais cela peut causer des problèmes numériques) 
-Nmin: nombre minimum de particules dans une cellule pour la considérer comme valide
+Rmax: paramètre déterminant la taille maximum des cellules créée dans l'algorithme (le plus grand possible est la meilleure option, mais cela peut causer des problèmes numériques) <br />
+Nmin: nombre minimum de particules dans une cellule pour la considérer comme valide<br />
 
-ImagePath: Path (location+nom) de l'image qui sera créée
+ImagePath: Path (location+nom) de l'image qui sera créée <br />
 
 ### Comment exécuter le code<br />
 Le script CreateTri.py doit être lancé en premier.<br />
@@ -31,7 +31,7 @@ python PartialImage.py 3<br />
 ....<br />
 python PartialImage.py 9<br />
 <br />
-cela créera tous les fichiers triangles nécessaires à la création de l'image
+Cela créera tous les fichiers triangles nécessaires à la création de l'image.
 d'une fois tous les fichiers triangle crée, exécuter BuildImage.py<br />
 python BuildImage.py
 
