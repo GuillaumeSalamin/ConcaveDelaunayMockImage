@@ -285,3 +285,92 @@ def VertexList2d(tri,std_List,id_list,ax1,ax2,halfBoxSize):
             triangle_List = [*triangle_List,*Scale_triangle_2d(vertices,std_List,ax1,ax2,halfBoxSize)]
             alpha.append(alpha_list[ii][jj])
     return triangle_List,alpha
+
+#=============================================================================================================
+#                   fonction to let any user more choice in how to implement
+#=============================================================================================================
+
+def get_nbScaledList(InitialFrame,FinalFrame,trans):
+    """
+    def get_nbScaledList(InitialFrame,FinalFrame,trans):
+    
+        this function return the two N body object, each axis scaled to have a standar deviation of 1
+        this function can be used to obtain the argument of compute_final_cell(_,nb_scaled_tList,_,_,_,std_list,_,_):
+        to use compute_final_cell, execute this function before and use the return for the two argument.
+    input
+    - path of the initifial frame snapshot
+    - path of the image frame snapshot
+    - the translation vector to applied
+    return 
+    - nb_scaled_tList = [nb0_scaled,nb_scaled] a list of [initial frame N body object scaled,image frame N body object scaled]
+    - [std_x,std_y,std_z,std_vx,std_vy,std_vz]
+
+    """
+    nb0 = download_simulation(InitialFrame,trans)
+    std_list = compute_std(nb0)
+    nb0_scaled = scale_nb(nb0,std_list)
+
+    nb = download_simulation(FinalFrame,trans)
+    nb_scaled = scale_nb(nb,std_list)
+
+    nb_scaled_tList = [nb0_scaled,nb_scaled]
+    return nb_scaled_tList,std_list
+
+def unscale_triangle(triangle6D_list, std_list):
+    """
+    def unscale_triangle(triangle6D_list, std_list):
+
+        because all is done in a scaled coordinate system, this function go back to the initial coordinate system.
+    """
+    for ii in range(len(triangle6D_list)):
+        for kk in range(7):
+            for jj in range(6):
+                triangle6D_list[ii][kk][jj] *= std_list[jj]
+
+
+def compute_final_cell(part_id,nb_scaled_tList,neighbors,Rmax,Nmin,std_list,error_max=5,verbos=False):
+    """
+    def compute_final_cell(part_id,nb_scaled_tList,neighbors,Rmax,Nmin,std_list,error_max=5,verbos=False):
+    
+        Take a cell id (given by pNoby nb.num) and compute the phase space cell define in initial frame who evolve into the final frame.
+        This return a list of 6-Dimensional simplices who compose the cell.
+
+    input
+    - Particule id (given by pNoby nb.num)
+    - nb_scaled_tList is given by def get_nbScaledList(InitialFrame,FinalFrame,trans): (run get_nbScaledList only once to optimize the code)
+    - neighbors must be compute beforehand by running CreateTri.py
+    - Rmax is the maximum radius of cell, you can take the value from your paraImage.yaml
+    - Nmin, minimal number of particle to create a valide cell, you can take the value from your paraImage.yaml
+    - std_list is given by def get_nbScaledList(InitialFrame,FinalFrame,trans): (run get_nbScaledList only once to optimize the code)
+    - error_max, minimal error (in %) between the initial volume (cell volume in inital frame) and the reconstructed volume in final frame
+    - verbos, determine the quantities of print.
+    return 
+    - flag, the cell is correctly reconstruct only if flag==0
+    - triangle6D, list of 6D simplices.
+
+    """
+    nb0 = nb_scaled_tList[0]
+    idf = np.where(nb0.num==part_id)[0][0]
+    print(idf)
+    if verbos:
+        print(f'DEBBUG :: cell creation')
+    w_scale_tList = create_w_tList_cell(nb_scaled_tList,neighbors,idf,Rmax=Rmax)
+    flag = 0
+    if len(w_scale_tList[0])<Nmin:
+        flag=1
+        return flag,[]
+    else:
+        if verbos:
+            print('flag=0')
+            print('DEBUG : Concave Delaunay Algorithm')
+        index_conserved_simplex_tList,tri_tList,flag_tList = Volume_evolution_Liouville_condition_concave_delaunay_refinements(w_scale_tList,error_max=error_max,verbos=verbos)
+        flag = flag_tList[-1]
+        index_List = index_conserved_simplex_tList[-1]
+        tri = tri_tList[-1]
+        #V_cons = delaunay_volume_6D(tri_tList[0])
+
+        triangle6D = []
+        for ii in index_List:
+            triangle6D.append(tri.points[tri.simplices[ii]])
+        unscale_triangle(triangle6D,std_list)
+        return flag,triangle6D
