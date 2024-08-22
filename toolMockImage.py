@@ -351,7 +351,7 @@ def compute_final_cell(part_id,nb_scaled_tList,neighbors,Rmax,Nmin,std_list,erro
     """
     nb0 = nb_scaled_tList[0]
     idf = np.where(nb0.num==part_id)[0][0]
-    print(idf)
+    #print(idf)
     if verbos:
         print(f'DEBBUG :: cell creation')
     w_scale_tList = create_w_tList_cell(nb_scaled_tList,neighbors,idf,Rmax=Rmax)
@@ -368,7 +368,8 @@ def compute_final_cell(part_id,nb_scaled_tList,neighbors,Rmax,Nmin,std_list,erro
         index_List = index_conserved_simplex_tList[-1]
         tri = tri_tList[-1]
         #V_cons = delaunay_volume_6D(tri_tList[0])
-
+        if verbos:
+            print(f'flag={flag}')
         triangle6D = []
         for ii in index_List:
             triangle6D.append(tri.points[tri.simplices[ii]])
